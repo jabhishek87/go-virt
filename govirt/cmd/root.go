@@ -26,10 +26,11 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var cfgFile string
+var logFile = "app.log"
+var customViper = viperWithLogging()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -73,22 +74,22 @@ func init() {
 func initConfig() {
 	if cfgFile != "" {
 		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
+		customViper.SetConfigFile(cfgFile)
 	} else {
 		// Find $PWD directory.
 		rootDir, err := os.Getwd()
 		cobra.CheckErr(err)
 
 		// Search config in home directory with name ".go-virt" (without extension).
-		viper.AddConfigPath(rootDir)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".go-virt")
+		customViper.AddConfigPath(rootDir)
+		customViper.SetConfigType("yaml")
+		customViper.SetConfigName(".go-virt")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	customViper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	if err := customViper.ReadInConfig(); err == nil {
+		fmt.Fprintln(os.Stderr, "Using config file:", customViper.ConfigFileUsed())
 	}
 }
