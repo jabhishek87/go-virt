@@ -1,0 +1,2 @@
+config:
+  logFile: app.log
